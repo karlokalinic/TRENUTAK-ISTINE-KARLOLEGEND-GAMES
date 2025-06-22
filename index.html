@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="hr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trenutak Istine - Psihološki Kviz</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="game-container">
+
+        <!-- Početni ekran -->
+
+        <div id="intro-screen" class="screen active">
+
+            <h1 class="game-title">TRENUTAK ISTINE</h1>
+
+            <p class="game-subtitle">Psihološki test koji će otkriti tvoje najdublje tajne</p>
+
+            <div class="intro-text">
+
+                <p>Dobrodošao u igru gdje nema mjesta lažima.</p>
+
+                <p>21 pitanje. 6 razina. 500.000 kuna.</p>
+
+                <p>Jedino pravilo: <strong>BUDI ISKREN</strong></p>
+
+            </div>
+
+            <button id="start-btn" class="primary-btn">ZAPOČNI IGRU</button>
+
+        </div>
+
+  
+
+        <!-- Glavni game screen -->
+
+        <div id="game-screen" class="screen">
+
+            <!-- Header s informacijama -->
+
+            <div id="game-header">
+
+                <div class="game-info">
+
+                    <span id="current-level">Razina 1</span>
+
+                    <span id="current-money">0 kn</span>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div id="progress-fill"></div>
+
+                </div>
+
+            </div>
+
+  
+
+            <!-- Dramatični komentar voditelja -->
+
+            <div id="host-comment" class="host-section">
+
+                <div class="host-avatar">🎭</div>
+
+                <div id="host-text" class="host-text"></div>
+
+            </div>
+
+  
+
+            <!-- Pitanje -->
+
+            <div id="question-section" class="question-section">
+
+                <h2 id="question-text"></h2>
+
+                <div class="question-context" id="question-context"></div>
+
+            </div>
+
+  
+
+            <!-- Odgovori -->
+
+            <div id="answer-section" class="answer-section">
+
+                <button id="yes-btn" class="answer-btn yes-btn" data-answer="yes">DA</button>
+
+                <button id="no-btn" class="answer-btn no-btn" data-answer="no">NE</button>
+
+            </div>
+
+  
+
+            <!-- Timer i statistike -->
+
+            <div id="stats-section" class="stats-section">
+
+                <div class="stat">
+
+                    <span class="stat-label">Vrijeme odgovora:</span>
+
+                    <span id="response-time">0.0s</span>
+
+                </div>
+
+                <div class="stat">
+
+                    <span class="stat-label">Pitanje:</span>
+
+                    <span id="question-number">1/21</span>
+
+                </div>
+
+            </div>
+
+  
+
+            <!-- Quit opcija -->
+
+            <button id="quit-btn" class="quit-btn">ODUSTANI I UZMI NOVAC</button>
+
+        </div>
+
+  
+
+        <!-- Završni ekran -->
+
+        <div id="end-screen" class="screen">
+
+            <h1 id="end-title"></h1>
+
+            <div id="final-amount" class="final-amount"></div>
+
+            <div id="final-comment" class="final-comment"></div>
+
+            <div id="game-summary" class="game-summary"></div>
+
+            <button id="restart-btn" class="primary-btn">IGRAJ PONOVNO</button>
+
+        </div>
+
+    </div>
+
+  
+
+    <script src="questions.js"></script>
+
+    <script src="adaptive.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

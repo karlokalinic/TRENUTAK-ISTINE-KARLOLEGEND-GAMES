@@ -1,0 +1,560 @@
+:root {
+  --primary-red: #cc0000;
+
+  --dark-red: #990000;
+
+  --light-red: #ff3333;
+
+  --bg-dark: #0d0d0d;
+
+  --bg-medium: #1a1a1a;
+
+  --bg-light: #2d2d2d;
+
+  --text-primary: #ffffff;
+
+  --text-secondary: #cccccc;
+
+  --text-muted: #888888;
+
+  --border-color: #333333;
+
+  --shadow-color: rgba(204, 0, 0, 0.3);
+
+  --transition: all 0.3s ease;
+}
+
+/* Reset i bazni stilovi */
+
+* {
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Crimson Text", serif;
+
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-medium) 100%);
+
+  color: var(--text-primary);
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+}
+
+/* Container */
+
+#game-container {
+  max-width: 800px;
+
+  margin: 0 auto;
+
+  min-height: 100vh;
+
+  position: relative;
+
+  padding: 20px;
+}
+
+/* Screen transitions */
+
+.screen {
+  display: none;
+
+  animation: fadeIn 0.5s ease-in-out;
+
+  min-height: calc(100vh - 40px);
+}
+
+.screen.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Intro screen stilovi */
+
+#intro-screen {
+  text-align: center;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 40px 20px;
+}
+
+.game-title {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+
+  font-weight: 700;
+
+  color: var(--primary-red);
+
+  text-shadow: 0 0 20px var(--shadow-color);
+
+  margin-bottom: 1rem;
+
+  letter-spacing: 0.1em;
+}
+
+.game-subtitle {
+  font-size: clamp(1rem, 4vw, 1.5rem);
+
+  color: var(--text-secondary);
+
+  margin-bottom: 2rem;
+
+  font-style: italic;
+}
+
+.intro-text {
+  max-width: 500px;
+
+  margin-bottom: 3rem;
+
+  line-height: 1.6;
+}
+
+.intro-text p {
+  margin-bottom: 1rem;
+
+  font-size: clamp(1rem, 3vw, 1.2rem);
+}
+
+/* Gumbovi */
+
+.primary-btn {
+  background: linear-gradient(45deg, var(--primary-red), var(--dark-red));
+
+  color: var(--text-primary);
+
+  border: none;
+
+  padding: 15px 40px;
+
+  font-size: 1.2rem;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.1em;
+
+  cursor: pointer;
+
+  border-radius: 5px;
+
+  transition: var(--transition);
+
+  box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(45deg, var(--light-red), var(--primary-red));
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 6px 20px var(--shadow-color);
+}
+
+/* Game screen layout */
+
+#game-screen {
+  display: grid;
+
+  grid-template-rows: auto auto 1fr auto auto auto;
+
+  gap: 20px;
+
+  padding: 20px 0;
+}
+
+/* Header */
+
+#game-header {
+  background: var(--bg-light);
+
+  padding: 15px 20px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--border-color);
+}
+
+.game-info {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 10px;
+
+  font-size: 1.1rem;
+
+  font-weight: 600;
+}
+
+.progress-bar {
+  height: 6px;
+
+  background: var(--bg-dark);
+
+  border-radius: 3px;
+
+  overflow: hidden;
+}
+
+#progress-fill {
+  height: 100%;
+
+  background: linear-gradient(90deg, var(--primary-red), var(--light-red));
+
+  width: 0%;
+
+  transition: width 0.5s ease;
+}
+
+/* Host komentar sekcija */
+
+.host-section {
+  background: var(--bg-medium);
+
+  padding: 20px;
+
+  border-radius: 10px;
+
+  border-left: 4px solid var(--primary-red);
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 15px;
+
+  min-height: 80px;
+}
+
+.host-avatar {
+  font-size: 2rem;
+
+  flex-shrink: 0;
+}
+
+.host-text {
+  font-size: 1.1rem;
+
+  line-height: 1.5;
+
+  font-style: italic;
+
+  color: var(--text-secondary);
+
+  animation: typewriter 2s ease-in-out;
+}
+
+/* Pitanje sekcija */
+
+.question-section {
+  text-align: center;
+
+  padding: 30px 20px;
+
+  background: var(--bg-light);
+
+  border-radius: 15px;
+
+  border: 2px solid var(--border-color);
+
+  min-height: 150px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+#question-text {
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+
+  font-weight: 600;
+
+  margin-bottom: 15px;
+
+  line-height: 1.4;
+
+  color: var(--text-primary);
+}
+
+.question-context {
+  font-size: 1rem;
+
+  color: var(--text-muted);
+
+  font-style: italic;
+}
+
+/* Odgovori */
+
+.answer-section {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+
+  padding: 0 20px;
+}
+
+.answer-btn {
+  padding: 20px;
+
+  font-size: 1.5rem;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  border: 3px solid;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: var(--transition);
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.yes-btn {
+  background: transparent;
+
+  color: #00cc00;
+
+  border-color: #00cc00;
+}
+
+.yes-btn:hover {
+  background: #00cc00;
+
+  color: white;
+
+  box-shadow: 0 0 20px rgba(0, 204, 0, 0.4);
+}
+
+.no-btn {
+  background: transparent;
+
+  color: var(--primary-red);
+
+  border-color: var(--primary-red);
+}
+
+.no-btn:hover {
+  background: var(--primary-red);
+
+  color: white;
+
+  box-shadow: 0 0 20px var(--shadow-color);
+}
+
+/* Statistike */
+
+.stats-section {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 15px 20px;
+
+  background: var(--bg-medium);
+
+  border-radius: 8px;
+
+  font-size: 0.9rem;
+}
+
+.stat {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+.stat-label {
+  color: var(--text-muted);
+
+  font-size: 0.8rem;
+
+  text-transform: uppercase;
+}
+
+/* Quit gumb */
+
+.quit-btn {
+  background: transparent;
+
+  color: var(--text-muted);
+
+  border: 1px solid var(--border-color);
+
+  padding: 10px 20px;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  transition: var(--transition);
+
+  font-size: 0.9rem;
+
+  text-transform: uppercase;
+}
+
+.quit-btn:hover {
+  color: var(--text-primary);
+
+  border-color: var(--text-primary);
+}
+
+/* Završni ekran */
+
+#end-screen {
+  text-align: center;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 40px 20px;
+
+  gap: 20px;
+}
+
+.final-amount {
+  font-size: clamp(2rem, 8vw, 3rem);
+
+  font-weight: 700;
+
+  color: var(--primary-red);
+
+  text-shadow: 0 0 20px var(--shadow-color);
+}
+
+.final-comment {
+  max-width: 600px;
+
+  font-size: 1.2rem;
+
+  line-height: 1.6;
+
+  color: var(--text-secondary);
+
+  font-style: italic;
+}
+
+.game-summary {
+  background: var(--bg-light);
+
+  padding: 20px;
+
+  border-radius: 10px;
+
+  max-width: 500px;
+
+  width: 100%;
+}
+
+/* Responsive design */
+
+@media (max-width: 768px) {
+  #game-container {
+    padding: 10px;
+  }
+
+  .answer-section {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+  }
+
+  .stats-section {
+    flex-direction: column;
+
+    gap: 10px;
+  }
+
+  .host-section {
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+  }
+}
+
+/* Animacije za dramatičnost */
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.dramatic-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+.typing {
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  animation: typewriter 3s steps(40, end);
+}
