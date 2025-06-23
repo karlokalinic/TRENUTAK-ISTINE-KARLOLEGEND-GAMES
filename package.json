@@ -1,0 +1,11 @@
+{
+  "name": "trenutak-istine-netlify",
+  "version": "1.0.0",
+  "description": "Trenutak Istine TV Show - Netlify Functions",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "netlify-lambda": "^2.0.15"
+  }
+}

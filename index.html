@@ -3,218 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trenutak Istine - KARLOLEGEND GAMES</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Trenutak Istine - TV Show</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Audio Elements for Background Music and SFX -->
-    <audio id="backgroundMusic" loop>
-        <source src="#" type="audio/mpeg">
-        <!-- Background music will be loaded via API.BOX V4.5 -->
-    </audio>
-    
-    <!-- Intro Screen -->
-    <div id="introScreen" class="screen">
-        <div class="intro-container">
-            <div class="logo-section">
-                <div class="karlolegend-logo">KARLOLEGEND GAMES</div>
+    <!-- Loading screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-title">TRENUTAK ISTINE</h1>
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Priprema psihološke analize...</p>
+        </div>
+    </div>
+
+    <!-- Start screen -->
+    <div id="start-screen" class="start-screen">
+        <div class="start-content">
+            <h1 class="main-title">TRENUTAK ISTINE</h1>
+            <p class="subtitle">Inspiriran TV showom iz 2008. godine</p>
+            <div class="host-intro">
+                <h2>DR. VERITAS</h2>
+                <p>Forenzički psiholog</p>
+                <p class="warning">⚠️ UPOZORENJE: Ova igra koristi naprednu AI analizu za otkrivanje psiholoških profila. Nastavkom se slažete s time da vaše odgovore analizira AI sustav.</p>
             </div>
             
-            <div class="title-section">
-                <h1 class="game-title">TRENUTAK ISTINE</h1>
-                <div class="title-subtitle">Psihološki labirint tvoje duše</div>
-                <div class="title-description">21 pitanje. 6 razina. Jedna istina.</div>
+            <div class="difficulty-selection">
+                <h3>Odaberite dubinu analize:</h3>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn" data-questions="15">
+                        <span class="diff-title">BRZA</span>
+                        <span class="diff-desc">15 pitanja</span>
+                    </button>
+                    <button class="difficulty-btn active" data-questions="21">
+                        <span class="diff-title">STANDARDNA</span>
+                        <span class="diff-desc">21 pitanje</span>
+                    </button>
+                    <button class="difficulty-btn" data-questions="30">
+                        <span class="diff-title">DUBOKA</span>
+                        <span class="diff-desc">30 pitanja</span>
+                    </button>
+                </div>
             </div>
             
-            <div class="intro-controls">
-                <button id="startGame" class="btn btn--primary btn--xl game-btn">
-                    <span class="btn-text">ZAPOČNI IGRU</span>
-                    <div class="btn-glow"></div>
+            <button id="start-game" class="start-btn">POČNI ANALIZU</button>
+        </div>
+    </div>
+
+    <!-- Game screen -->
+    <div id="game-screen" class="game-screen hidden">
+        <div class="game-header">
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+                <span id="question-number" class="question-counter">Pitanje 1/21</span>
+            </div>
+        </div>
+
+        <div class="game-content">
+            <!-- AI Status Indicator -->
+            <div id="ai-status" class="ai-status">
+                <span class="ai-indicator">🤖 AI AKTIVAN</span>
+                <span id="ai-model" class="ai-model">DeepSeek R1</span>
+            </div>
+
+            <!-- Question Display -->
+            <div class="question-container">
+                <h2 id="current-question" class="question-text">
+                    Učitavanje pitanja...
+                </h2>
+            </div>
+
+            <!-- Answer Buttons -->
+            <div class="answer-container">
+                <button id="da-btn" class="answer-btn da-btn" disabled>
+                    <span class="btn-text">DA</span>
+                    <span class="btn-subtitle">Istina</span>
                 </button>
-                
-                <div class="audio-controls">
-                    <button id="muteToggle" class="audio-btn" title="Mute/Unmute">
-                        <span class="audio-icon">🔊</span>
-                    </button>
-                    <input type="range" id="volumeSlider" min="0" max="100" value="70" class="volume-slider">
-                </div>
+                <button id="ne-btn" class="answer-btn ne-btn" disabled>
+                    <span class="btn-text">NE</span>
+                    <span class="btn-subtitle">Laž</span>
+                </button>
             </div>
-        </div>
-        
-        <div class="intro-background-effects">
-            <div class="glitch-effect"></div>
-            <div class="pulse-effect"></div>
-        </div>
-    </div>
 
-    <!-- Game Screen -->
-    <div id="gameScreen" class="screen hidden">
-        <div class="game-container">
-            <!-- Header -->
-            <header class="game-header">
-                <div class="game-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">RAZINA</span>
-                        <span id="currentLevel" class="stat-value">1</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">NOVAC</span>
-                        <span id="currentMoney" class="stat-value">0 kn</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">PITANJE</span>
-                        <span id="questionNumber" class="stat-value">1/21</span>
-                    </div>
+            <!-- AI Comment Display -->
+            <div id="ai-comment-container" class="ai-comment-container hidden">
+                <div class="host-avatar">
+                    <span class="avatar-icon">👨‍⚕️</span>
+                    <span class="host-name">DR. VERITAS</span>
                 </div>
-                
-                <div class="progress-container">
-                    <div id="progressBar" class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Main Game Area -->
-            <div class="game-main">
-                <!-- AI Host Section -->
-                <div class="ai-host-section">
-                    <div class="ai-avatar">
-                        <div class="ai-face">
-                            <div class="ai-eyes">
-                                <div class="ai-eye"></div>
-                                <div class="ai-eye"></div>
-                            </div>
-                            <div class="ai-mouth"></div>
-                        </div>
-                        <div class="ai-speaking-indicator" id="speakingIndicator"></div>
-                    </div>
-                    
-                    <div class="ai-comment-panel">
-                        <div id="aiComment" class="ai-comment">
-                            Dobrodošao u psihološki labirint tvoje duše. Ovdje nema mjesta lažima.
-                        </div>
-                        <div class="ai-controls">
-                            <button id="ttsToggle" class="tts-btn" title="Text-to-Speech">
-                                <span class="tts-icon">🎙️</span>
-                            </button>
-                            <button id="repeatTTS" class="tts-btn" title="Ponovi">
-                                <span class="tts-icon">🔄</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Question Section -->
-                <div class="question-section">
-                    <div class="question-panel">
-                        <h2 id="questionText" class="question-text">
-                            Jesi li spreman suočiti se s vlastitom istinom?
-                        </h2>
-                        
-                        <div class="answer-buttons">
-                            <button id="answerYes" class="answer-btn answer-yes">
-                                <span class="answer-text">DA</span>
-                                <div class="answer-glow"></div>
-                            </button>
-                            <button id="answerNo" class="answer-btn answer-no">
-                                <span class="answer-text">NE</span>
-                                <div class="answer-glow"></div>
-                            </button>
-                        </div>
-                        
-                        <div class="game-actions">
-                            <button id="quitGame" class="quit-btn" disabled>
-                                <span>ODUSTANI S NOVCEM</span>
-                            </button>
-                        </div>
-                    </div>
+                <div id="ai-comment" class="ai-comment">
+                    Analiziram vaš odgovor...
                 </div>
             </div>
 
-            <!-- Chat Box -->
-            <div id="chatBox" class="chat-box">
-                <div class="chat-header">
-                    <span class="chat-title">AI ALGORITAM</span>
-                    <button id="chatToggle" class="chat-toggle">📱</button>
-                </div>
-                <div class="chat-messages" id="chatMessages">
-                    <div class="chat-message ai-message">
-                        <div class="message-content">Dobrodošao. Analizirat ću tvoje odgovore...</div>
-                        <div class="message-time">Sada</div>
-                    </div>
-                </div>
-                <div class="chat-typing" id="chatTyping">
-                    <div class="typing-indicator">
-                        <span></span><span></span><span></span>
-                    </div>
-                    <span class="typing-text">AI tipka...</span>
-                </div>
+            <!-- Response Time Display -->
+            <div id="response-time" class="response-time hidden">
+                <span class="time-label">Vrijeme odgovora:</span>
+                <span id="time-value" class="time-value">0.0s</span>
             </div>
         </div>
     </div>
 
-    <!-- End Screen -->
-    <div id="endScreen" class="screen hidden">
-        <div class="end-container">
-            <div class="end-results">
-                <h1 class="end-title">IGRA ZAVRŠENA</h1>
-                <div class="final-stats">
-                    <div class="final-money">
-                        <span class="money-label">ZARADIO SI</span>
-                        <span id="finalMoney" class="money-amount">0 kn</span>
-                    </div>
-                    <div class="game-summary">
-                        <div class="summary-item">
-                            <span>Pitanja odgovorena:</span>
-                            <span id="questionsAnswered">0/21</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>DA odgovora:</span>
-                            <span id="yesAnswers">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>NE odgovora:</span>
-                            <span id="noAnswers">0</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="end-message">
-                    <p id="endMessage">Istina je bila blizu, ali nisi je dosegao...</p>
-                </div>
-                
-                <div class="end-actions">
-                    <button id="restartGame" class="btn btn--primary btn--lg">
-                        <span>IGRAJ PONOVNO</span>
-                    </button>
-                    <button id="backToMenu" class="btn btn--secondary btn--lg">
-                        <span>POVRATAK NA POČETAK</span>
-                    </button>
-                </div>
+    <!-- End screen -->
+    <div id="end-screen" class="end-screen hidden">
+        <div class="end-content">
+            <h1 class="end-title">ANALIZA ZAVRŠENA</h1>
+            <div id="final-analysis" class="final-analysis">
+                <h2>Finalna psihološka procjena</h2>
+                <div id="final-comments" class="final-comments"></div>
+            </div>
+            <button id="restart-btn" class="restart-btn">NOVA ANALIZA</button>
+        </div>
+    </div>
+
+    <!-- Loading Indicator (AI Processing) -->
+    <div id="ai-loading" class="ai-loading-indicator hidden">
+        <div class="loading-content">
+            <div class="ai-brain-icon">🧠</div>
+            <span class="loading-message">DR. VERITAS analizira vaš odgovor...</span>
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </div>
 
-    <!-- Keyboard Shortcuts Help -->
-    <div class="keyboard-help" id="keyboardHelp">
-        <div class="help-content">
-            <h3>Tipkovnička kratice</h3>
-            <div class="shortcuts">
-                <div><kbd>Enter</kbd> - Potvrdi DA</div>
-                <div><kbd>Space</kbd> - Potvrdi NE</div>
-                <div><kbd>Q</kbd> - Odustani</div>
-                <div><kbd>T</kbd> - Toggle TTS</div>
-                <div><kbd>C</kbd> - Toggle Chat</div>
-                <div><kbd>M</kbd> - Mute/Unmute</div>
-                <div><kbd>H</kbd> - Sakrij/Prikaži pomoć</div>
-                <div><kbd>Esc</kbd> - Zatvori/Nazad</div>
-            </div>
-        </div>
+    <!-- Test AI Connection Button (samo za testiranje) -->
+    <div id="test-controls" class="test-controls">
+        <button onclick="testAIConnection()" class="test-btn">Test AI Veze</button>
     </div>
 
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

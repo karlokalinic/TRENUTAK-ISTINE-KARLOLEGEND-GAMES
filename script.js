@@ -1,618 +1,305 @@
-
-// Glavna logika "Trenutak Istine" igre
-
+// Trenutak Istine - Glavna JavaScript datoteka s AI integracijom
 class TrenutakIstineGame {
-
   constructor() {
-
     this.gameState = {
-
-      currentLevel: 1,
-
-      currentQuestion: 0,
-
-      totalQuestions: 21,
-
-      money: 0,
-
       isGameActive: false,
-
-      questionStartTime: 0
-
-    };
-
-    this.adaptiveEngine = new AdaptiveQuestionEngine();
-
-    this.currentQuestionObj = null;
-
-    this.initializeEventListeners();
-
-  }
-
-  
-
-  initializeEventListeners() {
-
-    // Start game gumb
-
-    document.getElementById('start-btn').addEventListener('click', () => {
-
-      this.startGame();
-
-    });
-
-  
-
-    // Answer gumbovi
-
-    document.getElementById('yes-btn').addEventListener('click', (e) => {
-
-      this.handleAnswer('yes');
-
-    });
-
-  
-
-    document.getElementById('no-btn').addEventListener('click', (e) => {
-
-      this.handleAnswer('no');
-
-    });
-
-  
-
-    // Quit gumb
-
-    document.getElementById('quit-btn').addEventListener('click', () => {
-
-      this.quitGame();
-
-    });
-
-  
-
-    // Restart gumb
-
-    document.getElementById('restart-btn').addEventListener('click', () => {
-
-      this.restartGame();
-
-    });
-
-  
-
-    // Keyboard shortcuts
-
-    document.addEventListener('keydown', (e) => {
-
-      if (!this.gameState.isGameActive) return;
-
-      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-
-        this.handleAnswer('no');
-
-      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-
-        this.handleAnswer('yes');
-
-      } else if (e.key === 'Escape') {
-
-        this.quitGame();
-
-      }
-
-    });
-
-  }
-
-  
-
-  startGame() {
-
-    // Reset game state
-
-    this.gameState = {
-
+      currentQuestion: 1,
+      totalQuestions: 21, // Varijabilan broj
       currentLevel: 1,
-
-      currentQuestion: 0,
-
-      totalQuestions: 21,
-
-      money: 0,
-
-      isGameActive: true,
-
-      questionStartTime: 0
-
+      questionStartTime: 0,
+      playerAnswers: [],
+      aiComments: []
     };
-
-    this.adaptiveEngine.reset();
-
-    // Switch screens
-
-    this.switchScreen('intro-screen', 'game-screen');
-
-    // Show intro host comment
-
-    this.showHostComment(this.adaptiveEngine.getRandomComment(HOST_COMMENTS.intro));
-
-    // Start first question after delay
-
-    setTimeout(() => {
-
-      this.nextQuestion();
-
-    }, 3000);
-
+    
+    this.currentQuestionObj = null;
+    this.aiEndpoint = '/.netlify/functions/get-ai-comment';
+    this.initializeGame();
   }
 
-  
+  // Inicijalizacija igre
+  initializeGame() {
+    console.log('🎬 Inicijaliziranje Trenutak Istine...');
+    this.setupEventListeners();
+    this.showStartScreen();
+  }
 
-  nextQuestion() {
+  // Event listeners
+  setupEventListeners() {
+    const daBtn = document.getElementById('da-btn');
+    const neBtn = document.getElementById('ne-btn');
+    const startBtn = document.getElementById('start-game');
 
-    if (this.gameState.currentQuestion >= this.gameState.totalQuestions) {
+    if (daBtn) daBtn.addEventListener('click', () => this.handleAnswer('DA'));
+    if (neBtn) neBtn.addEventListener('click', () => this.handleAnswer('NE'));
+    if (startBtn) startBtn.addEventListener('click', () => this.startGame());
+  }
 
-      this.winGame();
-
-      return;
-
-    }
-
-  
-
-    // Check if we need to move to next level
-
-    const questionsPerLevel = this.getQuestionsPerLevel();
-
-    let questionsInCurrentLevel = 0;
-
-    for (let i = 1; i <= this.gameState.currentLevel; i++) {
-
-      questionsInCurrentLevel += questionsPerLevel[`level${i}`];
-
-    }
-
-    if (this.gameState.currentQuestion >= questionsInCurrentLevel) {
-
-      this.gameState.currentLevel++;
-
-      this.showLevelTransition();
-
-      return;
-
-    }
-
-  
-
-    // Get next question using adaptive algorithm
-
-    this.currentQuestionObj = this.adaptiveEngine.selectNextQuestion(this.gameState.currentLevel);
-
-    if (!this.currentQuestionObj) {
-
-      // Fallback ako nema pitanja
-
-      this.nextLevel();
-
-      return;
-
-    }
-
-  
-
-    this.gameState.currentQuestion++;
-
-    this.displayQuestion(this.currentQuestionObj);
-
-    this.updateUI();
-
-    // Start timing
-
+  // Pokretanje igre
+  startGame() {
+    this.gameState.isGameActive = true;
     this.gameState.questionStartTime = performance.now();
-
+    
+    // Sakrij start screen
+    const startScreen = document.getElementById('start-screen');
+    if (startScreen) startScreen.style.display = 'none';
+    
+    // Prikaži prvi upit
+    this.showNextQuestion();
   }
 
-  
+  // Prikaz sljedećeg pitanja
+  showNextQuestion() {
+    if (this.gameState.currentQuestion > this.gameState.totalQuestions) {
+      this.endGame();
+      return;
+    }
 
-  displayQuestion(questionObj) {
+    // Odaberi sljedeće pitanje (možete integrirati s vašom postojećom logikom)
+    const pitanje = this.getNextQuestion();
+    this.currentQuestionObj = pitanje;
+    
+    // Ažuriraj UI
+    this.updateQuestionUI(pitanje);
+    this.gameState.questionStartTime = performance.now();
+  }
 
-    const questionElement = document.getElementById('question-text');
-
-    const contextElement = document.getElementById('question-context');
-
-    // Animacija za novo pitanje
-
-    questionElement.style.opacity = '0';
-
-    contextElement.style.opacity = '0';
-
-    setTimeout(() => {
-
-      questionElement.textContent = questionObj.text;
-
-      contextElement.textContent = QUESTION_CONTEXTS[questionObj.id] || '';
-
-      questionElement.style.opacity = '1';
-
-      contextElement.style.opacity = '1';
-
-      // Add dramatic effect for high-intensity questions
-
-      if (questionObj.intensity >= 5) {
-
-        questionElement.classList.add('dramatic-pulse');
-
-        setTimeout(() => {
-
-          questionElement.classList.remove('dramatic-pulse');
-
-        }, 2000);
-
+  // Dohvaćanje sljedećeg pitanja (integrirajte s vašom logikom)
+  getNextQuestion() {
+    // OVDJE INTEGRIRAJTE VAŠU POSTOJEĆU LOGIKU ZA PITANJA
+    const demoPitanja = [
+      {
+        id: 1,
+        text: "Jeste li ikada poželili smrt članu svoje obitelji?",
+        category: "family",
+        intensity: 3
+      },
+      {
+        id: 2,
+        text: "Jeste li ikada varali u vezi?",
+        category: "relationships",
+        intensity: 4
+      },
+      {
+        id: 3,
+        text: "Jeste li ikada ukrali nešto vrijedno više od 100 kuna?",
+        category: "morality",
+        intensity: 2
       }
-
-    }, 300);
-
-    // Enable answer buttons
-
-    this.enableAnswerButtons();
-
+      // Dodajte više pitanja...
+    ];
+    
+    return demoPitanja[(this.gameState.currentQuestion - 1) % demoPitanja.length];
   }
 
-  
+  // Ažuriranje UI-ja s pitanjem
+  updateQuestionUI(pitanje) {
+    const questionElement = document.getElementById('current-question');
+    const questionNumber = document.getElementById('question-number');
+    
+    if (questionElement) {
+      questionElement.textContent = pitanje.text;
+    }
+    
+    if (questionNumber) {
+      questionNumber.textContent = `Pitanje ${this.gameState.currentQuestion}/${this.gameState.totalQuestions}`;
+    }
+    
+    // Omogući gumbove
+    this.enableAnswerButtons();
+  }
 
-  handleAnswer(answer) {
-
+  // Rukovanje odgovorom
+  async handleAnswer(answer) {
     if (!this.gameState.isGameActive || !this.currentQuestionObj) return;
 
-    // Calculate response time
-
     const responseTime = performance.now() - this.gameState.questionStartTime;
-
-    // Disable buttons to prevent double-clicking
-
     this.disableAnswerButtons();
 
-    // Analyze response using adaptive engine
+    // Spremi odgovor
+    const answerData = {
+      questionId: this.currentQuestionObj.id,
+      question: this.currentQuestionObj.text,
+      answer: answer,
+      responseTime: responseTime,
+      timestamp: new Date().toISOString()
+    };
+    
+    this.gameState.playerAnswers.push(answerData);
 
-    const hostResponse = this.adaptiveEngine.analyzeResponse(
+    // Prikaži loading indikator
+    this.showLoadingIndicator(true);
 
-      this.currentQuestionObj.id,
+    try {
+      // Pozovi AI za komentar
+      const aiComment = await this.getAIComment(
+        this.currentQuestionObj.text,
+        answer,
+        this.createGameContext(responseTime)
+      );
 
-      answer,
+      // Sakrij loading indikator
+      this.showLoadingIndicator(false);
 
-      responseTime,
+      // Prikaži AI komentar
+      this.showAIComment(aiComment);
 
-      this.currentQuestionObj
+      // Spremi AI komentar
+      this.gameState.aiComments.push({
+        questionId: this.currentQuestionObj.id,
+        comment: aiComment,
+        timestamp: new Date().toISOString()
+      });
 
-    );
+    } catch (error) {
+      console.error('Greška pri dohvaćanju AI komentara:', error);
+      this.showLoadingIndicator(false);
+      this.showAIComment("Trenutno imamo tehničkih poteškoća s analizom...");
+    }
 
-    // Update response time display
-
-    document.getElementById('response-time').textContent = `${(responseTime / 1000).toFixed(1)}s`;
-
-    // Show host comment
-
-    this.showHostComment(hostResponse);
-
-    // Add dramatic pause before next question
-
-    const pauseDuration = this.calculateDramaticPause(responseTime, this.currentQuestionObj.intensity);
-
+    // Pauza za dramatičnost, zatim sljedeće pitanje
     setTimeout(() => {
-
-      this.nextQuestion();
-
-    }, pauseDuration);
-
+      this.gameState.currentQuestion++;
+      this.showNextQuestion();
+    }, 3000);
   }
 
-  
+  // AI komentar poziv
+  async getAIComment(pitanje, odgovor, kontekst) {
+    try {
+      const response = await fetch(this.aiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pitanje: pitanje,
+          odgovor: odgovor,
+          kontekst: kontekst
+        })
+      });
 
-  calculateDramaticPause(responseTime, intensity) {
-
-    let basePause = 2000; // 2 sekunde osnovne pauze
-
-    // Duža pauza za sporije odgovore
-
-    if (responseTime > 3000) {
-
-      basePause += 1000;
-
-    }
-
-    // Duža pauza za intenzivnija pitanja
-
-    if (intensity >= 5) {
-
-      basePause += 1500;
-
-    }
-
-    // Predloži odustajanje ako algoritam preporučuje
-
-    if (this.adaptiveEngine.shouldSuggestQuitting()) {
-
-      basePause += 2000;
-
-      setTimeout(() => {
-
-        this.showHostComment("Možda je vrijeme da prestaneš dok možeš...");
-
-      }, basePause - 1000);
-
-    }
-
-    return basePause;
-
-  }
-
-  
-
-  showHostComment(comment) {
-
-    const hostElement = document.getElementById('host-text');
-
-    // Typing effect
-
-    hostElement.textContent = '';
-
-    hostElement.classList.add('typing');
-
-    let i = 0;
-
-    const typingInterval = setInterval(() => {
-
-      if (i < comment.length) {
-
-        hostElement.textContent += comment.charAt(i);
-
-        i++;
-
-      } else {
-
-        clearInterval(typingInterval);
-
-        hostElement.classList.remove('typing');
-
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
 
-    }, 50);
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('✅ AI komentar uspješno dohvaćen:', data.model);
+        return data.komentar;
+      } else {
+        console.warn('⚠️ Korišten fallback komentar');
+        return data.komentar;
+      }
 
-  }
-
-  
-
-  showLevelTransition() {
-
-    const transitionComment = HOST_COMMENTS.level_transitions[`level${this.gameState.currentLevel}`];
-
-    this.showHostComment(transitionComment);
-
-    // Update money
-
-    this.gameState.money = MONEY_LEVELS[`level${this.gameState.currentLevel - 1}`] || 0;
-
-    this.updateUI();
-
-    setTimeout(() => {
-
-      this.nextQuestion();
-
-    }, 4000);
-
-  }
-
-  
-
-  updateUI() {
-
-    // Update level and money
-
-    document.getElementById('current-level').textContent = `Razina ${this.gameState.currentLevel}`;
-
-    document.getElementById('current-money').textContent = `${this.gameState.money.toLocaleString()} kn`;
-
-    // Update question counter
-
-    document.getElementById('question-number').textContent =
-
-      `${this.gameState.currentQuestion}/${this.gameState.totalQuestions}`;
-
-    // Update progress bar
-
-    const progress = (this.gameState.currentQuestion / this.gameState.totalQuestions) * 100;
-
-    document.getElementById('progress-fill').style.width = `${progress}%`;
-
-    // Show/hide quit button based on money
-
-    const quitBtn = document.getElementById('quit-btn');
-
-    if (this.gameState.money > 0) {
-
-      quitBtn.style.display = 'block';
-
-      quitBtn.textContent = `ODUSTANI I UZMI ${this.gameState.money.toLocaleString()} KN`;
-
-    } else {
-
-      quitBtn.style.display = 'none';
-
+    } catch (error) {
+      console.error('❌ Greška pri AI pozivu:', error);
+      // Fallback komentari
+      const fallbacks = [
+        "Zanimljiv odgovor... otkriva puno o vašoj osobnosti.",
+        "Hmm... vaša iskrenost je... enlightening.",
+        "Fascinantno kako pristupate ovoj temi..."
+      ];
+      return fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
-
   }
 
-  
+  // Kreiranje konteksta za AI
+  createGameContext(responseTime) {
+    return {
+      currentQuestion: this.gameState.currentQuestion,
+      totalQuestions: this.gameState.totalQuestions,
+      responseTimeMs: responseTime,
+      previousAnswers: this.gameState.playerAnswers.slice(-3), // Zadnja 3 odgovora
+      gameProgress: (this.gameState.currentQuestion / this.gameState.totalQuestions) * 100
+    };
+  }
+
+  // UI helper funkcije
+  showLoadingIndicator(show) {
+    let indicator = document.getElementById('ai-loading');
+    
+    if (!indicator && show) {
+      indicator = document.createElement('div');
+      indicator.id = 'ai-loading';
+      indicator.className = 'ai-loading-indicator';
+      indicator.innerHTML = '🧠 DR. VERITAS analizira vaš odgovor...';
+      document.body.appendChild(indicator);
+    }
+    
+    if (indicator) {
+      indicator.style.display = show ? 'block' : 'none';
+    }
+  }
+
+  showAIComment(comment) {
+    const commentElement = document.getElementById('ai-comment');
+    if (commentElement) {
+      commentElement.textContent = comment;
+      commentElement.style.display = 'block';
+      
+      // Animacija
+      commentElement.classList.add('fade-in');
+      setTimeout(() => {
+        commentElement.classList.remove('fade-in');
+      }, 500);
+    }
+  }
 
   enableAnswerButtons() {
-
-    document.getElementById('yes-btn').disabled = false;
-
-    document.getElementById('no-btn').disabled = false;
-
-    document.getElementById('yes-btn').style.opacity = '1';
-
-    document.getElementById('no-btn').style.opacity = '1';
-
+    const daBtn = document.getElementById('da-btn');
+    const neBtn = document.getElementById('ne-btn');
+    
+    if (daBtn) daBtn.disabled = false;
+    if (neBtn) neBtn.disabled = false;
   }
-
-  
 
   disableAnswerButtons() {
-
-    document.getElementById('yes-btn').disabled = true;
-
-    document.getElementById('no-btn').disabled = true;
-
-    document.getElementById('yes-btn').style.opacity = '0.5';
-
-    document.getElementById('no-btn').style.opacity = '0.5';
-
+    const daBtn = document.getElementById('da-btn');
+    const neBtn = document.getElementById('ne-btn');
+    
+    if (daBtn) daBtn.disabled = true;
+    if (neBtn) neBtn.disabled = true;
   }
 
-  
-
-  quitGame() {
-
+  // Završetak igre
+  endGame() {
     this.gameState.isGameActive = false;
-
-    this.endGame(false, this.gameState.money);
-
+    console.log('🎯 Igra završena!');
+    console.log('📊 Odgovori:', this.gameState.playerAnswers);
+    console.log('🤖 AI komentari:', this.gameState.aiComments);
+    
+    // Prikaži završni ekran
+    this.showEndScreen();
   }
 
-  
-
-  winGame() {
-
-    this.gameState.isGameActive = false;
-
-    this.gameState.money = MONEY_LEVELS.level6;
-
-    this.endGame(true, this.gameState.money);
-
+  showEndScreen() {
+    // Implementirajte prikaz završnog ekrana
+    alert(`Igra završena! Odgovorili ste na ${this.gameState.playerAnswers.length} pitanja.`);
   }
-
-  
-
-  endGame(won, finalAmount) {
-
-    // Generate personalized final comment
-
-    const finalComment = this.adaptiveEngine.generateFinalComment(won, finalAmount);
-
-    // Switch to end screen
-
-    this.switchScreen('game-screen', 'end-screen');
-
-    // Update end screen content
-
-    document.getElementById('end-title').textContent = won ? 'POBJEDNIK!' : 'IGRA ZAVRŠENA';
-
-    document.getElementById('final-amount').textContent = `${finalAmount.toLocaleString()} kn`;
-
-    document.getElementById('final-comment').textContent = finalComment;
-
-    // Show game summary
-
-    this.showGameSummary();
-
-  }
-
-  
-
-  showGameSummary() {
-
-    const debugInfo = this.adaptiveEngine.getDebugInfo();
-
-    const yesAnswers = debugInfo.responseHistory.filter(r => r.answer === 'yes').length;
-
-    const noAnswers = debugInfo.responseHistory.filter(r => r.answer === 'no').length;
-
-    const avgResponseTime = debugInfo.responseHistory.reduce((sum, r) => sum + r.responseTime, 0) /
-
-               debugInfo.responseHistory.length / 1000;
-
-    const summaryHTML = `
-
-      <h3>Statistike igre:</h3>
-
-      <p><strong>DA odgovora:</strong> ${yesAnswers}</p>
-
-      <p><strong>NE odgovora:</strong> ${noAnswers}</p>
-
-      <p><strong>Prosječno vrijeme odgovora:</strong> ${avgResponseTime.toFixed(1)}s</p>
-
-      <p><strong>Najproblematičnija kategorija:</strong> ${this.adaptiveEngine.getCategoryName(
-
-        Object.entries(debugInfo.discomfortScores)
-
-          .sort(([,a], [,b]) => b - a)[0][0]
-
-      )}</p>
-
-    `;
-
-    document.getElementById('game-summary').innerHTML = summaryHTML;
-
-  }
-
-  
-
-  restartGame() {
-
-    this.switchScreen('end-screen', 'intro-screen');
-
-  }
-
-  
-
-  switchScreen(fromScreen, toScreen) {
-
-    document.getElementById(fromScreen).classList.remove('active');
-
-    document.getElementById(toScreen).classList.add('active');
-
-  }
-
-  
-
-  getQuestionsPerLevel() {
-
-    return {
-
-      level1: 6,
-
-      level2: 5,
-
-      level3: 4,
-
-      level4: 3,
-
-      level5: 2,
-
-      level6: 1
-
-    };
-
-  }
-
 }
 
-  
-
-// Initialize game when DOM is loaded
-
+// Inicijalizacija kada se stranica učita
 document.addEventListener('DOMContentLoaded', () => {
-
-  const game = new TrenutakIstineGame();
-
-  // Add some Easter eggs and debug features
-
-  window.gameDebug = game; // For debugging in console
-
-  console.log('%c🎭 Trenutak Istine - Debug Mode Enabled', 'color: #cc0000; font-size: 16px; font-weight: bold;');
-
-  console.log('Type "gameDebug.adaptiveEngine.getDebugInfo()" to see current game statistics');
-
+  console.log('🚀 Pokretanje Trenutak Istine aplikacije...');
+  window.trenutakIstineGame = new TrenutakIstineGame();
 });
+
+// Test funkcija za provjeru AI veze
+async function testAIConnection() {
+  const game = window.trenutakIstineGame;
+  if (game) {
+    try {
+      const testComment = await game.getAIComment(
+        "Test pitanje",
+        "Test odgovor",
+        { test: true }
+      );
+      console.log('🧪 AI test uspješan:', testComment);
+      alert('AI veza radi! Komentar: ' + testComment);
+    } catch (error) {
+      console.error('🧪 AI test neuspješan:', error);
+      alert('AI veza ne radi: ' + error.message);
+    }
+  }
+}
