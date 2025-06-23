@@ -1070,7 +1070,7 @@ Najvažnije otkriće je da ispitanik posjeduje kapacitet za duboku samoanalizu i
             
             console.log("📤 HTTP ZAHTJEV: Šalje se na Netlify funkciju", requestData);
             
-            const response = await fetch('/netlify/functions/get-ai-comments.js', {
+            const response = await fetch('/netlify/functions/get-ai-comment.js', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
