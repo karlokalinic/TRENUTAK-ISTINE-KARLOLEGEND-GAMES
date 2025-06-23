@@ -1,27 +1,43 @@
+# netlify.toml
+# Konfiguracija za Netlify deployment
+
 [build]
-  # Direktorij gdje su vaši frontend fileovi (HTML, CSS, JS)
+  # Specify the directory where the build outputs files
   publish = "."
   
-  # Direktorij gdje su vaše Netlify Functions
-  functions = "netlify/functions"
+  # Command to run for the build (ako imaš build proces)
+  # command = "npm run build"
 
 [functions]
-  # Node.js verzija za funkcije
-  node_bundler = "esbuild"
+  # Direktorij gdje se nalaze Netlify funkcije
+  directory = "netlify/functions"
   
-  # Eksterni moduli koji su potrebni
-  external_node_modules = ["node-fetch"]
+  # Node.js bundler za optimizaciju
+  node_bundler = "esbuild"
 
-# Redirects za funkcije
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+# Environment varijable za produkciju (već postavljena na dashboard-u)
+# [context.production.environment]
+#   api = "your_openrouter_api_key_here"
 
-# CORS headers za sve funkcije
+# Redirects (ako trebas)
+# [[redirects]]
+#   from = "/api/*"
+#   to = "/.netlify/functions/:splat"
+#   status = 200
+
+# Headers za sigurnost
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Specifični headers za funkcije
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"

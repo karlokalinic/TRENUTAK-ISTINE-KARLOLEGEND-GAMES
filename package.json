@@ -1,11 +1,29 @@
 {
-  "name": "trenutak-istine-netlify",
+  "name": "trenutak-istine-ai",
   "version": "1.0.0",
-  "description": "Trenutak Istine TV Show - Netlify Functions",
+  "description": "AI-powered psychological profiling game inspired by 'The Moment of Truth'",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step required'",
+    "deploy": "netlify deploy --prod"
+  },
+  "keywords": [
+    "ai",
+    "psychology", 
+    "game",
+    "netlify",
+    "openrouter"
+  ],
+  "author": "Karlo Kalinic",
+  "license": "MIT",
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "netlify-lambda": "^2.0.15"
+    "netlify-cli": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
