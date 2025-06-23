@@ -31,7 +31,7 @@ class PsychologicalProfiler {
         });
         
         // AI model konfiguracija
-        this.aiModel = "deepseek/deepseek-r1";
+        this.aiModel = "deepseek/deepseek-r1:free";
         this.conversationHistory = [];
         
         console.log("🤖 AI MODEL: Konfiguriran", {
